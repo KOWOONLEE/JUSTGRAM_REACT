@@ -1,11 +1,13 @@
 import React from "react";
 import { useState, useRef } from "react";
+import { createPath } from "react-router-dom";
+import Comments from "./Comments";
 
 function Feed() {
   const [comment, setComment] = useState();
   const [id, setId] = useState(1); //초기값을 넣어줘야 밑에 +1 이 찍힘
   const value = useRef(); //value를 참고하고 싶은 tag에 거는 것
-
+  const [inputState, setInput] = useState(""); // 초기값에 빈값들어감
   const [commentArray, setCommentArray] = useState([
     // 배열안에 객체로 관리
     {
@@ -19,11 +21,18 @@ function Feed() {
     // comment spray
     const newComment = {
       id: id,
-      content: value.current.value, // value : useRef를 담은 값, currnet.value: 해당 태그의 value
+      // content: value.current.value, // value : useRef를 담은 값, currnet.value: 해당 태그의 value'
+      content: inputState,
+      createdAt: new Date().toLocaleString(),
     };
+    setInput("");
     setCommentArray([...commentArray, newComment]);
   };
-
+  const onKeyPress = (e) => {
+    if (e.key === "Enter") {
+      addComment();
+    }
+  };
   return (
     <div className="feed-container">
       <div className="feed-header">
@@ -55,8 +64,18 @@ function Feed() {
         </div>
         <div className="feed-comment-list  padiing-10">
           {commentArray.map((comment) => {
-            //map 사용시에 식별할 수 있는 key가 필요
-            return <li key={comment.id}>{comment.content}</li>;
+            //map 사용시에 식별할 수 있는 key가 필요 // 최상위 tag에 key 넣어야함
+            return (
+              <li key={comment.id}>
+                <Comments
+                  id={comment.id}
+                  content={comment.content}
+                  author={"익명"}
+                  createdAt={comment.createdAt || "2022-01-01"}
+                />
+              </li>
+            ); //1
+            // <Comments comment={comment} /> //2
           })}
         </div>
         <div>42분전</div>
@@ -66,6 +85,9 @@ function Feed() {
             type="text"
             placeholder="댓글 달기..."
             ref={value}
+            value={inputState}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={onKeyPress}
           />
           <button className="commentbutton" type="button" onClick={addComment}>
             게시
