@@ -13,6 +13,7 @@ function Login() {
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
   const [isValid, setIsValid] = useState(false); // 초기값이 유효하지 않으니 false로 설정
+  const [token, setToken] = useState("");
 
   const handleIdInput = (e) => {
     //event 인자 받아서 status에 저장
@@ -31,6 +32,24 @@ function Login() {
       : setIsValid(false);
   };
 
+  const onLoginButtonClick = () => {
+    const body = {
+      email: id,
+      password: pw,
+    };
+    fetch("http://auth.jaejun.me:10010/login", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+      .then((res) => res.json())
+      .then((json) => {
+        // console.log(json);
+        setToken(json.access_token);
+        localStorage.setItem("token", json.access_token);
+      });
+  };
   return (
     <div className="flex-center container">
       <div className="background-img">
@@ -62,7 +81,10 @@ function Login() {
             <button
               style={{ backgroundColor: isValid ? "#4ec5f4" : "#cde9f4" }}
               className="login-button"
-              onClick={goToMain}
+              onClick={() => {
+                goToMain();
+                onLoginButtonClick();
+              }}
               type="button"
               id="button"
             >

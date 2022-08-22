@@ -4,8 +4,10 @@
   }
   .flex-center {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    vertical-align: center;
     margin-top: 20px;
   }
 
@@ -38,7 +40,6 @@
   .contents-wrapper {
     margin-top: 80px;
   }
-
   .feed-container {
     border: 1px solid gray;
     width: 500px;

@@ -1,8 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./Main.scss";
 import Feed from "./Feed";
+import { useState } from "react";
 
 function Main() {
+  const [feeds, setFeeds] = useState([]);
+
+  useEffect(() => {
+    fetch("./data/feeds.json")
+      .then((res) => res.json())
+      .then((data) => {
+        // console.log(data.feedData);
+        setFeeds(data.feedData);
+      });
+  }, []);
+
   return (
     <div className="main">
       <div className="header-wrapper">
@@ -39,7 +51,10 @@ function Main() {
       </div>
       <div className="flex-center">
         <div className="contents-wrapper"></div>
-        <Feed />
+
+        {feeds.map((feed) => {
+          return <Feed key={feed.feedId} feedData={feed} />;
+        })}
       </div>
     </div>
   );
